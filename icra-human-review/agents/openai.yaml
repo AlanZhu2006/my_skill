@@ -1,0 +1,4 @@
+interface:
+  display_name: "ICRA Human Review"
+  short_description: "Human-calibrated ICRA pre-submission review"
+  default_prompt: "Use $icra-human-review to assess this robotics paper like a selective human ICRA reviewer."
