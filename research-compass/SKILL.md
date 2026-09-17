@@ -9,7 +9,9 @@ Make progress on a research question, not on a counter of experiments. Preserve 
 
 ## Establish the compass
 
-Read the relevant project notes, existing results, code, and user constraints before proposing another run. Resume from evidence already present; a fresh session does not require a fresh baseline.
+Bind the question from the current user request. In open direction discovery, the question may be which phenomenon deserves investigation; do not substitute a previous project's question or architecture merely because its notes are available. Establish independent candidates before consulting old idea history for duplication or contrary evidence. The user's research interests guide exploration without forcing project reuse.
+
+When continuing an established project or preparing another run, read its relevant notes, existing results, code and user constraints. Resume from evidence already present; a fresh session does not require a fresh baseline. Preserving the main question in this mode does not mean importing that question into unrelated discovery.
 
 Distinguish four things:
 
