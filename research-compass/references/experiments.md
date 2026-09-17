@@ -56,7 +56,7 @@ Record artifacts, effect/uncertainty where meaningful, surprises, belief changes
 
 ## Recover from a loop
 
-At a plateau, write the common lesson of recent runs in one or two sentences. If the only difference is a new best score without a new explanation, decide whether the remaining task is legitimately optimization. If so, bound the tuning campaign with a target and budget. Otherwise inspect the live assumption that all variants share.
+At a plateau, write the common lesson of recent runs in one or two sentences. Distinguish selecting a lucky best score from establishing a repeatable, practically useful advantage. The latter can support a method contribution while its complete causal explanation remains open. If the remaining task is legitimately optimization, bound it with a target and budget; otherwise inspect the live assumption that all variants share.
 
 Useful recovery paths:
 

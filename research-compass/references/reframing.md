@@ -38,9 +38,11 @@ Include an ordinary explanation: extra compute, altered preprocessing, a changed
 
 For the hypothetical camera observation, alternatives might concern observability under little parallax, representation/convention errors, learned priors, or sequential composition. A useful probe separates these possibilities. “Add another loss and rerun” does not yet explain which possibility is being tested. Claims about a particular camera model still require its paper/code and evidence.
 
-## Select: compare worldviews before polishing implementations
+## Select: choose a useful contribution
 
 Judge candidates qualitatively by fit to the observation, assumption burden, consequences, practical value, prior-work overlap, and cost of decisive evidence. Novelty and truth are separate axes; an old mechanism can be the best explanation or baseline. Elegance alone is not efficacy.
+
+Compare different worldviews when the formulation is actually uncertain. When a bottleneck is already clear, develop a method within the existing formulation. Originality can lie in a concrete algorithmic improvement, justified combination, relaxed assumption or supported tradeoff. Existing work should help locate that contribution; a new worldview is optional. See [contribution-design.md](contribution-design.md) when overlap or method design is the main decision.
 
 Choose a primary branch and, when useful, retain a contrasting explanation or inexpensive alternative. Do not expand the active set faster than it can be evaluated. A long list of differently named variants is not conceptual diversity.
 
@@ -56,7 +58,7 @@ Inspect primary papers for assumptions and official repositories for the impleme
 
 Keep a short evidence note for useful sources: citation, inspected section/file, actual finding, transfer conditions, and effect on the next decision. Search abstracts can identify a lead but do not establish an implementation detail. Mark secondary accounts as such.
 
-For novelty, compare mechanisms and assumptions, not titles or phrasing. State “no equivalent found within these sources and queries” with the search boundary. If a close match exists, narrow the contribution to a new condition, explanation, capability, or evaluation supported by evidence; do not rename it and keep claiming the original novelty.
+For novelty, compare mechanisms and assumptions, not titles or phrasing. State “no equivalent found within these sources and queries” with the search boundary. If a close match exists, identify which part is already solved and what consequential difficulty remains. Credit and reuse it; develop a method or revise the contribution when a meaningful difference is supported. An overlap invalidates only the claim it actually covers. Retire an equivalent proposal when the relevant need is already met; do not generalize this into rejection of the entire direction or rename the same method and keep its original novelty claim.
 
 ### Stop conditions for thinking and search
 

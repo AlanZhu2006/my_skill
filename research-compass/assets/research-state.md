@@ -22,6 +22,16 @@
 | ID | Observation or source | Provenance / artifact | Validity and uncertainty | Decision changed |
 | --- | --- | --- | --- | --- |
 
+## Contribution under development
+
+<!-- Use when developing a method or research contribution; omit for unrelated diagnostics. -->
+
+- Closest methods: what is already solved, under which conditions:
+- Remaining important difficulty and its evidence (observed / reported / suspected):
+- Proposed design: inherited parts, specific change, rationale and expected tradeoff:
+- Intended contribution relative to those methods; nearest simple alternative:
+- Comparison that could establish the difference; claims already covered by prior work:
+
 ## Research frontier
 
 | Claim / branch | Status | Evidence for and against | Next test or revival condition |
