@@ -4,6 +4,7 @@ Reusable skills for Codex.
 
 - [ICRA Human Review](icra-human-review/SKILL.md): evidence-grounded, human-calibrated pre-submission review of robotics papers.
 - [Research Compass](research-compass/SKILL.md): intuition-led research with external connections, competing explanations, informative experiments, and explicit controls against drift and repetitive runs.
+- [Paper Research Scout](paper-research-scout/SKILL.md): turn daily paper reports into reproducible baseline opportunities and transferable conceptual directions, with verified sources and continuity across days.
 
 ## Research Compass / 研究罗盘
 
@@ -34,6 +35,28 @@ $research-compass 基于现有 brainstorm、代码和实验记录继续研究这
 ```
 
 The skill is also discoverable for relevant research requests. It does not itself launch background jobs or schedule future work. The optional Python helper records run plans and outcomes; it does not execute experiments or enforce resource limits. See its [usage and limits](research-compass/references/ledger.md).
+
+## Paper Research Scout / 从论文发现研究方向
+
+读取已经整理好的每日论文，沿两条路线寻找值得投入的问题：
+
+- **Baseline 切入点**：检查源码、准确的 checkpoint、数据和评估是否支持拟议实验，再寻找机制、表示、效率或适用边界上的实质问题。
+- **观点迁移**：提炼论文的新视角，映射到另一个具体问题，检查成立条件、已有工作和能区分解释的最小验证。
+
+观点价值与可复现程度分别判断；保留好想法，也明确哪些条件尚未满足。记录跨日的方向变化，避免每天把同一个想法重新包装。选定方向后可交给 Research Compass 继续研究。
+
+```text
+$skill-installer install https://github.com/AlanZhu2006/my_skill/tree/main/paper-research-scout
+```
+
+```text
+$paper-research-scout 阅读 ~/Documents/research idea/Codex_Automated_Paper_Reader/paper-daily/reports/2026-08-26.md。
+分别寻找可复现 baseline 上的新切入点，以及值得跨问题迁移的新观点。
+核查论文、源码和权重；说明假设、最近已有工作、最小验证及停止条件。
+与已有方向比较，优先给出少量值得投入的选择，不启动训练。
+```
+
+也可以指定“最近三份日报”或日期范围。默认识别上述本地目录，也支持其他报告目录；显式给定的日期不会被最新日期替换。输出与原始日报分开保存。不因日报里写了实验建议就自动启动实验或创建定时任务。
 
 ### Development checks
 
