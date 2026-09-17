@@ -1,11 +1,13 @@
 ---
 name: research-compass
-description: Advance open-ended scientific research through intuitive reframing, literature and open-source triangulation, competing explanations, and informative experiments. Use for developing research ideas, investigating mechanisms, continuing a research project, or escaping an unproductive experiment loop while preserving the core question and budget.
+description: Advance scientific research by finding meaningful openings in existing work, designing methods, intuitive reframing, and informative experiments. Use for developing research ideas, improving baselines, investigating mechanisms, continuing a project, or escaping an unproductive experiment loop while preserving the core question and budget.
 ---
 
 # Research Compass
 
 Make progress on a research question, not on a counter of experiments. Preserve the user's goal; allow explanations, representations, methods, and local plans to change. Use intuition to generate possibilities and evidence to decide what survives. Respond in the user's language.
+
+Aim for a useful, defensible contribution relative to existing work. A promising direction may already have many papers, and a good new method may build almost entirely on known components. Seek a consequential remaining difficulty and a justified way forward; do not optimize for distance from all prior work or require a new paradigm.
 
 ## Establish the compass
 
@@ -37,11 +39,15 @@ Do not mechanically run every mode on every iteration.
 | A result is surprisingly good | Check validity and a simpler rival explanation before expanding. |
 | Several runs teach the same lesson | Consolidate, inspect external ideas, and reconsider the representation or premise. |
 | A mechanism is already supported narrowly | Test its stated boundary or generalization; avoid reopening settled details. |
+| Close papers overlap the proposed idea | Use them as baselines; locate what they resolve and what remains before revising the method or claim. |
+| A meaningful limitation is sufficiently understood | Design and compare a concrete intervention; further reframing is optional. |
 | Evidence is sufficient for the requested deliverable | Synthesize, report limits, and finish. |
 
 ### Discover: intuition with consequences
 
 Use **See → Strip → Reframe → Unfold → Select → Verify** as thinking moves, not a questionnaire. Read [reframing.md](references/reframing.md) when generating ideas or escaping a plateau.
+
+A clear practical bottleneck in a mature method is also a valid starting point. Use direct method development when it fits; a surprising phenomenon, cross-domain analogy or change of worldview is not a prerequisite.
 
 Start with an actual tension: a success nobody explains well, a failure, redundancy, an information limit, a new observable, or an unexpected analogy. Describe it without inherited method names. Ask what remains when the backbone, benchmark, coordinates, and conventional task boundary are removed.
 
@@ -53,7 +59,17 @@ Consult relevant primary papers and inspect open-source implementations before s
 
 Record what a source actually contributes: its mechanism, assumptions, code location/version when inspected, and what transfers or fails to transfer. Distinguish a paper's claim, code behavior, and locally reproduced evidence. A repository link alone is not implementation inspection. If access is unavailable, state the gap and narrow the claim.
 
+Treat related work as a source of baselines, useful components and unresolved boundaries. Separate overlap in the broad area, the specific problem, and the proposed solution under comparable conditions. Finding one or two close papers calls for positioning the contribution; their existence or popularity alone is not evidence to abandon the direction. A prior result can invalidate a claimed first or a particular method without closing the research question.
+
 Use a dated candidate statement before a targeted equivalence search to preserve idea provenance; this is not a reason to postpone basic literature familiarization. Stop searching when the decision has enough support, or state the specific gap worth resolving next. See [reframing.md](references/reframing.md) for analogy and search methods, and [open-source-patterns.md](references/open-source-patterns.md) for the design sources behind this skill.
+
+### Develop: turn the remaining difficulty into a method
+
+When selecting a contribution or proposing a method, read [contribution-design.md](references/contribution-design.md). Establish what the closest methods achieve, the important condition or cost they still struggle with, and whether that limitation is observed, reported, or only suspected. Missing evaluation alone does not prove a failure or a research gap.
+
+Connect the remaining difficulty to a candidate cause and a concrete design change: what is computed, retained, selected, learned or optimized differently, why it could help, and what it costs. Reusing a backbone, objective, representation or component is legitimate. A module, loss, integration or engineering improvement can be research when its design addresses the difficulty and its added value is demonstrated. Neither small code changes nor familiar ingredients disqualify it.
+
+If the user asks for a new method, develop a plausible method sketch and its strongest simple alternative, with a comparison that can separate them. Mark uncertain assumptions and place a cheap diagnostic before costly implementation when needed. Do not repeatedly stop at a literature audit or a list of limitations once there is enough basis to propose a method; equally, do not fabricate a gap or promise an improvement when the evidence is insufficient. A testable engineering rationale can justify an exploratory prototype before a complete causal theory exists.
 
 ### Decide: buy information that matters
 
@@ -66,7 +82,7 @@ Before a consequential experiment, state briefly:
 3. What each plausible outcome would change, including an inconclusive outcome.
 4. The validity checks, affordable budget, and stopping rule.
 
-If every plausible outcome leads to the same action or would leave the mechanism equally ambiguous, redesign or skip the experiment. Exception: explicitly requested deliverables or replications can have value independent of hypothesis selection; name that value. A broad benchmark is justified when the decision is about generalization, not merely because it is easy to launch.
+If every plausible outcome leaves the intended decision unchanged, redesign or skip the experiment. A test may establish a useful performance or cost advantage while the full mechanism remains unresolved; state which claim it can support. Explicitly requested deliverables or replications can also have value independent of hypothesis selection; name that value. A broad benchmark is justified when the decision is about generalization, not merely because it is easy to launch.
 
 Read [experiments.md](references/experiments.md) for causal controls, uncertainty, repeated runs, and loop recovery. The optional [ledger helper](scripts/research_ledger.py) reserves run identities, checks exact duplicates, and retains outcomes. Read [ledger.md](references/ledger.md) before using it. It does not judge scientific equivalence or execute experiments.
 
@@ -86,6 +102,8 @@ Before a new branch or further tuning, name its connection to the main question 
 
 Review a branch when additional work is unlikely to change a decision, a premise fails, evidence contradicts it, costs exceed its value, or an agreed checkpoint is reached. Do not require an arbitrary number of failures. Equally, do not abandon a promising idea just because its first implementation fails: distinguish engineering failure, inadequate measurement, low power, and a refuted prediction.
 
+On encountering close prior work, identify which claim it covers and assess the remaining useful difference before switching directions. Revise the claim or method within the same question when warranted. Retire a redundant proposal when the prior solution already meets the relevant need under comparable conditions and no worthwhile difference is supported; do not infer that an entire field is exhausted. Do not manufacture a tiny unevaluated condition solely to preserve a novelty story.
+
 When stuck, stop queued work that is owned by this task and no longer useful. Summarize what the branch taught, inspect a relevant outside mechanism, and choose among repairing the test, changing the hypothesis, changing the representation, parking the branch, or ending the investigation. Keep a small active frontier that fits the budget; extra candidates can remain parked. Tree search and multiple agents are optional execution techniques, not requirements.
 
 For long work, refresh the state at meaningful decisions. Resume from it after interruption or context loss, reconcile any running jobs before relaunching, and inspect the ledger/history before creating a new run. Skill instructions alone do not create background execution or scheduled follow-ups.
@@ -98,6 +116,7 @@ Give the user a concise, inspectable account of:
 
 - The current answer or best hypothesis and how it serves the original question.
 - The strongest evidence, rival explanation, and remaining uncertainty.
+- For method development: closest baselines, the supported or suspected remaining difficulty, proposed design, intended contribution, and comparison that would establish it.
 - The relevant outside connection and its limits, when one informed the work.
 - What changed, what was parked, and the best next action or reason to stop.
 - Links to concrete artifacts and the resources used when material.

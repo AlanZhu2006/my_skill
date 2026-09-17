@@ -36,7 +36,7 @@ Search the structural fingerprint in both domains: phenomenon, entities, require
 
 For the nearest prior work, state what is shared and the specific change in mechanism, assumptions, capability or evidence. A new application may be valuable, but name its contribution accurately. An older paper can invalidate a supposed conceptual novelty even if today's donor paper is new.
 
-Preserve a dated hypothesis before targeted equivalence search to track idea provenance; do not delay basic familiarization. If an equivalent exists, revise the question around an actually unresolved boundary, explanation or capability, or park it. Report search limits rather than “nobody has done this.”
+Preserve a dated hypothesis before targeted equivalence search to track idea provenance; do not delay basic familiarization. A close match narrows the claimed novelty and can provide a baseline. Identify what it already solves and whether a meaningful difficulty remains; a concrete adaptation or improved method in that same direction may still be valuable. Retire the redundant proposal when the existing solution already meets the relevant need and no supported useful difference remains. Do not treat a shared topic or familiar mechanism as proof that the whole direction is exhausted, or invent an untested corner case merely to claim novelty. Report search limits rather than “nobody has done this.”
 
 ## Avoid idea assembly by title
 

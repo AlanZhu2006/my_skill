@@ -12,7 +12,7 @@ Two routes serve different needs and can converge:
 - **A — Baseline opportunities:** find a meaningful new question, explanation, simplification, or capability in an existing method. Favor usable source, appropriate checkpoints, data, and evaluation over impressive but inaccessible results.
 - **B — Concept transfer:** extract an interesting viewpoint and test whether its structure transfers to a concrete problem. Missing donor code does not disqualify a useful idea; a transfer still needs assumptions, a rival, and a feasible first test.
 
-Do not force an equal number of recommendations from both routes. Scientific interest and execution readiness are separate judgments. An idea may be promising but blocked, executable but incremental, both, or neither.
+Do not force an equal number of recommendations from both routes. Scientific interest and execution readiness are separate judgments. A feasible idea can add little value, while a meaningful improvement to a mature method can be a strong research opportunity. A promising idea may also be blocked by resources.
 
 ## Bind the reading scope
 
@@ -44,11 +44,13 @@ Read [baseline-opportunities.md](references/baseline-opportunities.md) for the r
 
 Ask where the baseline exposes a consequential assumption, bottleneck, unnecessary intermediate representation, unresolved mechanism, or useful failure boundary. Derive a prediction before choosing a modification. A stronger backbone or another loss is a candidate only when it answers that question.
 
+Nearby papers help locate the remaining contribution. Distinguish a shared topic from an equivalent solution that already meets the same need under comparable conditions. Build on the closest methods when a meaningful limitation remains; a better algorithm, robustness improvement, justified integration or useful cost-quality tradeoff can qualify without a new paradigm. A mature open baseline can be a better starting point for this route than the most original paper in the shortlist.
+
 Audit resources against the **intended intervention**, not the repository as a whole. An inference checkpoint may support a diagnostic but not fine-tuning or distillation. Check the actual code entrypoint, exact model/variant, load path, data/splits, evaluation procedure, dependencies, licenses/access conditions, and plausible resource needs. Distinguish a project website, a future-release promise, released files, a successful local run, and a reproduced paper result.
 
 Prefer a genuinely accessible baseline. If a new paper is unavailable, an older open implementation can test its conceptual premise; state what is and is not reproduced, and check compatibility. For methods that require no learned weights, explain why a checkpoint is not applicable. If required resources remain missing, make the blocker explicit, park that execution plan, and retain a useful conceptual lead under Route B when warranted.
 
-Produce a short hypothesis, the minimum change and code location when verified, a matched comparison, a simpler rival, a decisive small test, and a scope/resource assessment. A failure analysis or a justified simplification can be a contribution; do not require every direction to add a module or claim state of the art.
+Produce a short hypothesis, the minimum change and code location when verified, a matched comparison, a simpler rival, a decisive small test, and a scope/resource assessment. A failure analysis or a justified simplification can be a contribution; do not require every direction to add a module or claim state of the art. When the user requests a new method, connect a supported or explicitly suspected limitation to a concrete design and comparison, rather than ending with a limitation inventory. Use a diagnostic first where it resolves a necessary design uncertainty.
 
 ## Route B: transfer a viewpoint, not a label
 
