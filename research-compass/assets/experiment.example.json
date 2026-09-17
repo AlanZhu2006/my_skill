@@ -1,0 +1,19 @@
+{
+  "id": "E-001",
+  "question_id": "Q-efficiency",
+  "hypothesis_id": "H-cache",
+  "comparison_id": "C-cold-vs-warm",
+  "claim": "The observed speedup comes from caching intermediate results.",
+  "rival": "The speedup comes from changing the workload rather than caching.",
+  "prediction": "On matched workloads, warm execution improves latency while cold execution matches the baseline.",
+  "decision": "If only warm runs improve, retain the caching explanation within this workload; if both improve, inspect shared changes; if uncertainty is large, report inconclusive before deciding whether more samples matter.",
+  "execution": {
+    "code_version": "synthetic-example-v1-clean",
+    "data_version": "synthetic-workload-v1/evaluation",
+    "protocol_version": "paired-cold-warm-v1",
+    "config": {"method": "cache-probe", "workload_size": 100, "repeats": 10},
+    "seed": 42
+  },
+  "budget": {"unit": "cpu_minutes", "limit": 5},
+  "stop_rule": "Stop at the declared paired sample count or five CPU minutes; mark an incomplete comparison inconclusive."
+}

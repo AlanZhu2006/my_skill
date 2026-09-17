@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Compass"
+  short_description: "Evidence-driven research with focus and useful exploration"
+  default_prompt: "Use $research-compass to advance this research question, challenge the current explanation, consult relevant prior work, and choose the next informative action within the available budget."
