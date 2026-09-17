@@ -22,7 +22,7 @@ A good viewpoint compresses several design choices and makes new consequences fo
 | Break point | What important difference could invalidate the transfer? |
 | Consequence | What prediction or simplification follows that the existing approach would not give? |
 
-Use a mapping failure to discard or revise the idea. Do not decorate a proposal with every neighboring theory. A cross-domain move needs no donor checkpoint if its premise can be tested independently, but its proposed test vehicle must still be concrete.
+Choose the recipient from a scientific need in the user's requested scope. A nearby personal project is not the default recipient. Use a mapping failure to discard or revise the idea. Do not decorate a proposal with every neighboring theory. A cross-domain move needs no donor checkpoint if its premise can be tested independently, but its proposed test vehicle must still be concrete.
 
 ## Develop competing explanations
 
@@ -40,7 +40,7 @@ Preserve a dated hypothesis before targeted equivalence search to track idea pro
 
 ## Avoid idea assembly by title
 
-Hypothetical example: a paper says its intermediate representation is useful for prediction. The leap “use the representation for robot control” is incomplete. Does it retain the action-dependent distinctions the controller needs? Does its useful invariance remove a control-relevant degree of freedom? A paired intervention can test that question before designing a large new policy.
+Hypothetical example: a paper finds that a representation is invariant to viewpoint. The leap “use it for camera localization” is incomplete. Does it retain distinctions needed to identify camera pose, or erase the very variable being estimated? Paired scenes and controlled camera changes can test that question before designing a new localization system.
 
 The transferable insight may be the **test for sufficiency**, rather than the representation itself. This distinction often yields a smaller, more general research question. It remains a hypothesis until both domain assumptions and nearby prior work are checked.
 

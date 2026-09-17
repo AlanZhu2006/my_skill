@@ -1,4 +1,4 @@
 interface:
   display_name: "Paper Research Scout"
-  short_description: "Turn paper digests into feasible and transferable research ideas"
-  default_prompt: "Use $paper-research-scout to read my selected daily paper reports, identify reproducible baseline opportunities and transferable ideas, verify the evidence, and recommend the most informative next steps."
+  short_description: "Screen original papers, then discover grounded research ideas"
+  default_prompt: "Use $paper-research-scout to screen my paper collection for original mechanisms and credible effects, deep-read the strongest leads, then develop reproducible baseline opportunities and transferable viewpoints without assuming an existing project."

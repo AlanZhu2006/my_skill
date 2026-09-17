@@ -38,12 +38,12 @@ The skill is also discoverable for relevant research requests. It does not itsel
 
 ## Paper Research Scout / 从论文发现研究方向
 
-读取已经整理好的每日论文，沿两条路线寻找值得投入的问题：
+先粗筛论文的新颖机制与可信效果，再深读值得关注的工作，最后沿两条路线寻找值得投入的问题：
 
 - **Baseline 切入点**：检查源码、准确的 checkpoint、数据和评估是否支持拟议实验，再寻找机制、表示、效率或适用边界上的实质问题。
 - **观点迁移**：提炼论文的新视角，映射到另一个具体问题，检查成立条件、已有工作和能区分解释的最小验证。
 
-观点价值与可复现程度分别判断；保留好想法，也明确哪些条件尚未满足。记录跨日的方向变化，避免每天把同一个想法重新包装。选定方向后可交给 Research Compass 继续研究。
+默认关注 navigation、CV、perception、Gaussian、3D reconstruction 和 SLAM，降低 manipulation、VLA 与 humanoid control 的优先级，同时保留特别有价值的跨领域工作。先评价论文本身，明确要求时才映射到既有项目或架构。观点价值、实证可信度与可复现程度分别判断；先独立形成候选，再查历史去重。允许没有新方向或实验建议。选定方向后可交给 Research Compass 继续研究。
 
 ```text
 $skill-installer install https://github.com/AlanZhu2006/my_skill/tree/main/paper-research-scout
@@ -51,9 +51,9 @@ $skill-installer install https://github.com/AlanZhu2006/my_skill/tree/main/paper
 
 ```text
 $paper-research-scout 阅读 ~/Documents/research idea/Codex_Automated_Paper_Reader/paper-daily/reports/2026-08-26.md。
-分别寻找可复现 baseline 上的新切入点，以及值得跨问题迁移的新观点。
+先粗筛候选论文，说明哪些值得深读、哪些仍需证据，再找 baseline 切入点与可迁移观点。
 核查论文、源码和权重；说明假设、最近已有工作、最小验证及停止条件。
-与已有方向比较，优先给出少量值得投入的选择，不启动训练。
+默认开放找方向，不套用既有项目；形成独立候选后查历史去重，不启动训练。
 ```
 
 也可以指定“最近三份日报”或日期范围。默认识别上述本地目录，也支持其他报告目录；显式给定的日期不会被最新日期替换。输出与原始日报分开保存。不因日报里写了实验建议就自动启动实验或创建定时任务。
