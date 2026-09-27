@@ -1,53 +1,37 @@
-# Research state
+# Research state (optional)
 
-<!-- Adapt this to existing project notes. Keep it short; link to raw evidence. Remove instructions once populated. -->
+Adapt this to existing project notes. Keep only fields that help the next decision; link raw artifacts instead of copying them. A one-off brainstorm needs no file.
 
-## Compass
+## Question and contract
 
-- Question and intended use:
-- Success conditions and scope boundaries:
-- Constraints and authorization already given:
-- Resources available, budget used/remaining, and next review point:
+- Question and why it matters:
+- Intended conditions, inputs, outputs, and success criterion:
+- Scope/authorization boundaries and available budget:
 
 ## Current decision
 
-- Best current explanation and confidence/limits:
-- Strongest live rival:
-- Most consequential unknown:
-- Next action, its mainline connection, and why it is informative:
-- Outcome-dependent decisions and stopping rule:
+- Most consequential observation and provenance (local / source / deduction / hypothesis):
+- Best explanation and strongest live rival:
+- What remains unknown; what result would change the design or claim:
+- Next affordable action, outcome-dependent decisions, and stopping condition:
 
-## Evidence and outside connections
+## Contribution, if developing one
 
-| ID | Observation or source | Provenance / artifact | Validity and uncertainty | Decision changed |
-| --- | --- | --- | --- | --- |
+- Closest method and its earned advantage:
+- Specific changed computation, representation, or objective; what stays inherited:
+- Structural donor and transfer/break condition, if relevant:
+- Claimed benefit, cost, failure boundary, and strongest simple alternative:
+- Comparison that could establish the intended difference:
 
-## Contribution under development
+## Evidence and decision trail
 
-<!-- Use when developing a method or research contribution; omit for unrelated diagnostics. -->
-
-- Closest methods: what is already solved, under which conditions:
-- Remaining important difficulty and its evidence (observed / reported / suspected):
-- Proposed design: inherited parts, specific change, rationale and expected tradeoff:
-- Intended contribution relative to those methods; nearest simple alternative:
-- Comparison that could establish the difference; claims already covered by prior work:
-
-## Research frontier
-
-| Claim / branch | Status | Evidence for and against | Next test or revival condition |
+| Date / ID | Source or observation and artifact | Validity / limits | Decision changed |
 | --- | --- | --- | --- |
 
-## Decision history
+Record negative and parked branches with their revival conditions. Do not relabel a prior result or create a new experiment tracker merely to populate this table.
 
-<!-- Append at meaningful changes, not after every command. Record scope changes explicitly. -->
+## Resume, for active campaigns only
 
-| Date | Decision and evidence | Consequence for the question / budget |
-| --- | --- | --- |
-
-## Resume here
-
-- Current code/data/protocol versions and artifact locations:
-- Ledger or existing experiment tracker:
-- Running or reserved jobs, owner, output location, and status:
-- Pending dependencies or user decisions:
-- Exact next step; what must be checked before launching anything:
+- Relevant code/data/protocol versions, dirty changes, and evidence paths:
+- Existing tracker/ledger and running or reserved jobs to reconcile:
+- Exact next step and dependencies before launching further work:

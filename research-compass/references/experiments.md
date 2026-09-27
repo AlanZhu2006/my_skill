@@ -11,6 +11,8 @@ Use the shortest experiment card that makes the action assessable. This may be a
 - **Validity:** plausible confounds and the control or check that addresses each material one.
 - **Provenance and budget:** code plus dirty changes, data/split, protocol, configuration, seed/randomness, cost cap, and abort condition.
 
+Choose the test only after naming which decision it serves: feasibility of the task, validity of a measurement, causal explanation, practical advantage, generalization, or equivalence to prior work. One result may answer one of these without answering the others.
+
 If a threshold cannot yet be justified, use an exploratory pilot to characterize scale and variance. Label it exploratory; do not choose a threshold after seeing the outcome and present it as confirmatory.
 
 ## Match the test to the uncertainty
@@ -19,6 +21,7 @@ If a threshold cannot yet be justified, use an exploratory pilot to characterize
 | --- | --- | --- |
 | Is the implementation valid? | Tiny known-answer case, unit/convention check, controlled input | Treating failed execution as a failed scientific idea |
 | Does the proposed mechanism explain a gain? | Matched control, ablation, intervention, simpler rival | Reporting only the final benchmark score |
+| Does an imported theory explain a gain? | Remove the claimed mechanism while matching its incidental timing, smoothing, inputs, and compute | Treating a useful mathematical derivation as proof of causal attribution |
 | Is the effect stable? | Paired comparisons, independent units, planned replications | Treating correlated frames or repeated seeds as independent evidence |
 | Does it generalize? | Held-out conditions, boundary tests, representative workloads | Repeated tuning against the final test set |
 | Is the formulation possible? | Identifiability argument, counterexample, idealized limit | Adding capacity to recover absent information |

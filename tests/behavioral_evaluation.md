@@ -2,6 +2,8 @@
 
 Conducted 2026-09-17 in an isolated temporary directory. One independent agent received the skill and the raw synthetic project below, without the evaluator's expected answer. It was asked to perform the task, not critique the skill. It could read local files and write outputs in the temporary directory; it could not modify the repository, browse, or launch training.
 
+This predates the 2026-09-27 direction-discovery revisions and is not a forward test of the current skill text.
+
 This is a single qualitative smoke test. It complements the automated ledger tests; it does not establish long-horizon research quality or reliable novelty detection. Re-evaluate with real project evidence before making stronger performance claims.
 
 ## Raw task

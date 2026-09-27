@@ -1,124 +1,33 @@
-# Build a contribution from existing work
+# Design and position a research contribution
 
-Use this when close prior work appears, when judging whether a direction is
-worth pursuing, or when the user wants a new method. The unit of contribution
-is the specific improvement or finding under stated conditions, not whether
-an entire research area is untouched.
+Use when a consequential difficulty has been identified and the user wants a method, explanation, or publishable contribution. If the difficulty is only suspected, first use [direction discovery](direction-discovery.md) to identify an outcome-branching premise check. Do not require a conceptual revolution when a precise improvement addresses the real need.
 
-## Locate the frontier of the closest methods
+## Establish the frontier, not an empty patch of literature
 
-Compare the relevant primary papers and implementations at the level needed
-for the decision. A short comparison can record:
+Identify the closest *working* solutions, not merely the most cited papers. Compare them under the intended task contract: inputs and privileged data, outputs and success criterion, mechanism, operating conditions, quality, cost, and evidence. Read primary papers and the implementation path when code behavior matters. Distinguish four kinds of overlap: same area, same problem, same mechanism, and same demonstrated capability. Similar vocabulary is not equivalence; different vocabulary is not novelty.
 
-| Method | What it already solves | Assumptions / information / cost | Remaining limitation and evidence | What we can reuse or compare |
-| --- | --- | --- | --- | --- |
+Write what the closest solution already does well before claiming a gap. A gap can be a reproducible failure, consequential excluded assumption, measured quality–cost tradeoff, or an important capability that remains unavailable under comparable conditions. Mark an untested condition as a hypothesis, not a failure. A close paper can make a direction *more* viable by providing a baseline, data, or mechanism to reuse; it only invalidates the claim it actually covers.
 
-Separate overlap in the topic, problem, mechanism and demonstrated capability.
-Two papers about uncertainty in reconstruction do not establish that every
-uncertainty-aware reconstruction method is equivalent. Conversely, different
-terminology does not make the same computation new. Cite the closest work and
-credit inherited parts explicitly.
+## Turn the difficulty into a computation
 
-Evidence of a remaining difficulty may be a reproducible failure, a documented
-assumption that excludes an important setting, a measured resource tradeoff,
-or a plausible concern needing a probe. Label these differently. “They did not
-evaluate dataset X” establishes unknown coverage, not failure on X. Explain why
-the setting matters and what makes existing methods insufficient before
-presenting it as an opportunity.
+The method should answer: **What changes, why should that change matter, and what else could explain the same result?** Give enough detail to implement or challenge it:
 
-Close work may increase the direction's feasibility by providing code, a
-benchmark, or evidence that the problem matters. Do not use paper count, a
-famous competitor, or a familiar ingredient as a novelty veto. It is enough
-to locate a meaningful contribution relative to the nearest solutions;
-an exhaustive proof of worldwide originality is unavailable and unnecessary
-for a bounded exploratory investigation.
+- Existing path to preserve: inputs, intermediate representation or state, outputs, and the baseline's earned advantage.
+- Changed path: what is computed, selected, stored, communicated, learned, or optimized differently; where and when it happens.
+- Causal link: which documented burden the change removes or which missing capability it supplies.
+- Predicted tradeoff: added compute/data/latency or a new failure boundary.
+- Distinguishing evidence: closest method, strongest minimal repair, and an outcome on which they disagree.
 
-## Decide what useful difference is still possible
+For an architecture, show the data flow and relevant variables or interfaces rather than just module names. For a mathematical method, state the objective and assumptions; test whether a simpler update with matched effective settings explains the gain. For an empirical finding or diagnostic tool, specify which decision it changes. Familiar ingredients can be a valid contribution when their coupling yields a consequential, supported difference; merely combining them is not evidence of one.
 
-Potential contributions include a better algorithm for an established problem,
-relaxing a consequential assumption, handling a recurring failure, a meaningful
-quality/cost tradeoff, improved robustness or data efficiency, a justified
-simplification, or making a previously inaccessible capability practical.
-These are possibilities, not a checklist to fill.
+Separate the **design hypothesis** (“this change may solve the burden”) from the **mechanism claim** (“it works for this reason”), **performance claim** (“it improves this outcome under these conditions”), and **priority claim** (“we are first”). Different evidence supports each. An exploratory prototype can justify further work without proving causality or generalization.
 
-Known components can form a new method when their selection, coupling or use
-resolves a concrete obstacle. State what is inherited and what changes. A
-small change can matter greatly; an elaborate architecture can add little.
-Judge the size, reliability and relevance of the effect under fair comparison,
-without requiring a new theory for every useful algorithmic improvement.
+## Compare fairly and respond to overlap
 
-For an application transfer, explain the obstacle that makes direct reuse
-inadequate and how the adaptation addresses it. Merely renaming a known method
-or moving it to another dataset does not establish a method contribution.
-A diagnostic or empirical study may be valuable in its own right, but when the
-user requests a new method, use that diagnosis to guide a design whenever the
-evidence permits.
+Test against the nearest published mechanism and a strong simple alternative: retuning, longer training, more context, ordinary post-processing, or an existing backend, as appropriate. Match input privileges, data, compute, selection, and evaluation where they could explain the advantage. A new method may legitimately trade one resource for another; report that frontier rather than only a headline score.
 
-Keep discovery of a good paper separate from finding a good baseline to extend.
-A relatively mature paper with accessible code and a clear remaining bottleneck
-can be an excellent research starting point. It need not be the most original
-paper in today's reading list.
+If prior work already uses the proposed mechanism, credit it and locate a real difference in assumptions, coupling, cost, evidence, or capability. If the same solution meets the same need under comparable conditions, retire the redundant proposal or label a requested reproduction accurately. Do not manufacture a tiny untested condition to rescue novelty, but do not abandon a useful research question merely because its first design is known.
 
-## Construct a method, with uncertainty visible
+When the user's goal is a new method and evidence is sufficient, produce a plausible implementable sketch and its decisive comparison rather than ending with a literature audit. When the decisive premise is unresolved, name the cheapest probe and explain how each outcome would change the design. A failed first implementation may reflect engineering, measurement, or low power rather than a false research premise; a valid, informative contradiction should revise the claim.
 
-Develop a short chain in the current notes, using only the detail needed:
-
-1. **Need and baseline:** what the user wants, and what the strongest relevant
-   existing method achieves under the intended conditions.
-2. **Remaining difficulty:** the failure, assumption or cost worth addressing;
-   evidence for it and the best ordinary explanation.
-3. **Design hypothesis:** the change in computation, objective, representation,
-   information use or scheduling that could address the difficulty. Give enough
-   inputs, outputs and steps for a sketch or pseudocode, plus expected overhead
-   and a condition where it may fail.
-4. **Claimed difference:** what is reused, what is proposed, and the improvement
-   or capability being sought. Keep new-method and first-ever claims separate.
-5. **Deciding comparison:** nearest method, simple fix, and a matched test or
-   ablation that would justify the design. Distinguish an immediate premise
-   check from the later evaluation needed to establish practical value.
-
-An empirically motivated design can be worth a small prototype while its causal
-explanation remains uncertain. Stage the investment instead of demanding that
-every assumption be proven before proposing anything. When diagnosis is needed,
-say which design decision its outcome changes; avoid endless diagnostics that
-never lead back to the requested method.
-
-## Respond proportionately to overlap
-
-- **Shared area or problem:** continue with the strongest relevant methods as
-  comparators. Reassess the proposed advantage, not the existence of the field.
-- **Similar mechanism, different important assumptions or capability:** inspect
-  whether that difference is real; retain or revise the method around a supported
-  remaining difficulty. Treat untested conditions as hypotheses.
-- **The initial method is already known, but the need remains unmet:** drop the
-  first-ever claim, reuse the method as a baseline, and investigate the cause of
-  the remaining limitation. A different solution within the same direction may
-  still be worthwhile.
-- **The same solution already meets the same need at comparable cost:** credit
-  it and retire the redundant proposal unless another worthwhile difference has
-  evidence. Reproduction can still be useful if requested, labeled accurately.
-- **Evidence is insufficient:** identify the closest source or inexpensive
-  comparison that would resolve the uncertainty; neither declare the direction
-  dead nor invent a gap to rescue it.
-
-Prefer a local revision of method or claim when the main question remains
-valuable. Consider a different direction when the need is already met, expected
-benefit is too small, the premise fails, or the cost is unjustified. There is no
-required number of rescue attempts and no novelty quota.
-
-## Hypothetical example
-
-Suppose two open methods already select keyframes using geometric uncertainty.
-An initial proposal to “add uncertainty-aware keyframes” is underspecified and
-may overlap both. Inspect how they estimate uncertainty, choose frames and
-handle the intended motion and resource constraints.
-
-If evidence shows their fixed selection rule misses brief useful observations
-under a realistic latency budget, a scheduling change could be a worthwhile
-method. Explain why it addresses that failure and compare against both methods
-and a simple threshold adjustment under the same budget. The uncertainty
-principle can be inherited; the proposed contribution is the effective selection
-rule and its supported advantage. If either baseline already handles that case,
-or the threshold adjustment removes the alleged problem, revise or retire that
-specific proposal. The existence of the two papers alone establishes neither
-the gap nor a reason to abandon navigation or reconstruction.
+The final contribution statement should be narrow enough to defend: “Under [task and conditions], [closest approach] faces [supported difficulty]; [specific changed computation] yields [targeted capability or tradeoff], as distinguished from [simple rival] by [comparison].” This is a compression test, not required wording.
