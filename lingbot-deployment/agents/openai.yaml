@@ -1,0 +1,4 @@
+interface:
+  display_name: "LingBot-Map Deployment"
+  short_description: "Run LingBot-Map streaming reconstruction, pose conventions, and causal video rendering correctly"
+  default_prompt: "Use $lingbot-deployment to run LingBot-Map reconstruction, verify pose conventions and FlashInfer backend settings, combine joint sessions, or audit incremental point-cloud renders."

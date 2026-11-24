@@ -5,6 +5,8 @@ Reusable skills for Codex.
 - [ICRA Human Review](icra-human-review/SKILL.md): evidence-grounded, human-calibrated pre-submission review of robotics papers.
 - [Research Compass](research-compass/SKILL.md): intuition-led research with external connections, competing explanations, informative experiments, and explicit controls against drift and repetitive runs.
 - [Paper Research Scout](paper-research-scout/SKILL.md): turn daily paper reports into reproducible baseline opportunities and transferable conceptual directions, with verified sources and continuity across days.
+- [NYU Torch SSH & Slurm](nyu-torch-ssh/SKILL.md): shared NYU Torch SSH ControlMaster workflows, verified multi-account/B200 preemptible Slurm submission rules, immutable source bundles, and scratch quota hygiene.
+- [LingBot-Map Deployment](lingbot-deployment/SKILL.md): LingBot-Map streaming RGB-to-3D reconstruction environment, pose conventions, FlashInfer backend requirements, joint streaming sessions, and causal render verification.
 
 ## Research Compass / 研究罗盘
 
@@ -58,6 +60,22 @@ $paper-research-scout 阅读 ~/Documents/research idea/Codex_Automated_Paper_Rea
 ```
 
 也可以指定“最近三份日报”或日期范围。默认识别上述本地目录，也支持其他报告目录；显式给定的日期不会被最新日期替换。输出与原始日报分开保存。不因日报里写了实验建议就自动启动实验或创建定时任务。
+
+## NYU Torch SSH & Slurm
+
+共享 NYU Torch HPC（`alantorch` / `torch`）的 ControlMaster 连接校验、6 账户多分区与 B200 抢占式作业提交、不可变源码包（`SOURCE_BUNDLE.sha256`）、Singularity/Conda 调用及 `/scratch` inode 保护操作手册。完整细则与实测记录见 [`nyu-torch-ssh/references/ssh_handbook.md`](nyu-torch-ssh/references/ssh_handbook.md)。
+
+```text
+$skill-installer install https://github.com/AlanZhu2006/my_skill/tree/main/nyu-torch-ssh
+```
+
+## LingBot-Map Deployment
+
+本机运行 LingBot-Map 流式三维重建的操作手册：FlashInfer JIT 环境变量、位姿二次取逆约定、长序列避免 `--use_sdpa` 的原因、跨 session 联合流式拼接以及 LK 重投影与因果渲染核验。完整细则见 [`lingbot-deployment/references/lingbot_deployment.md`](lingbot-deployment/references/lingbot_deployment.md)。
+
+```text
+$skill-installer install https://github.com/AlanZhu2006/my_skill/tree/main/lingbot-deployment
+```
 
 ### Development checks
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "NYU Torch SSH & Slurm"
+  short_description: "Operate shared NYU Torch SSH ControlMaster, Slurm GPU queues, and immutable bundles safely"
+  default_prompt: "Use $nyu-torch-ssh to verify the shared NYU Torch SSH master and identity, check quotas and GPU queues, transfer verified immutable bundles, and submit or monitor Slurm jobs safely."
