@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dual-Planner Ideation"
+  short_description: "Dialectical Lead Planner + Co-Planner peer review that grounds bold ideas without defensive conservatism"
+  default_prompt: "Use $dual-planner-ideation to run a grounded Lead Planner + Co-Planner dialectical review of this research idea or architecture plan, triaging objections into [HARD-FACT], [FIXABLE-SPEC], and [UNVERIFIED-RISK] with minimal falsification probes."

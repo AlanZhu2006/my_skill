@@ -4,6 +4,7 @@ Reusable skills for Codex.
 
 - [ICRA Human Review](icra-human-review/SKILL.md): evidence-grounded, human-calibrated pre-submission review of robotics papers.
 - [Research Compass](research-compass/SKILL.md): intuition-led research with external connections, competing explanations, informative experiments, and explicit controls against drift and repetitive runs.
+- [Dual-Planner Ideation](dual-planner-ideation/SKILL.md): dialectical Lead Planner + Co-Planner peer review that verifies bold ideas against real code/data/metrics while preventing defensive incrementalism via 3-class triage and minimal falsification probes.
 - [Paper Research Scout](paper-research-scout/SKILL.md): turn daily paper reports into reproducible baseline opportunities and transferable conceptual directions, with verified sources and continuity across days.
 - [NYU Torch SSH & Slurm](nyu-torch-ssh/SKILL.md): shared NYU Torch SSH ControlMaster workflows, verified multi-account/B200 preemptible Slurm submission rules, immutable source bundles, and scratch quota hygiene.
 - [LingBot-Map Deployment](lingbot-deployment/SKILL.md): LingBot-Map streaming RGB-to-3D reconstruction environment, pose conventions, FlashInfer backend requirements, joint streaming sessions, and causal render verification.
@@ -75,6 +76,18 @@ $skill-installer install https://github.com/AlanZhu2006/my_skill/tree/main/nyu-t
 
 ```text
 $skill-installer install https://github.com/AlanZhu2006/my_skill/tree/main/lingbot-deployment
+```
+
+## Dual-Planner Ideation / 双 Planner 科研辩证评审
+
+主 Planner（愿景构思与终审拍板）与副 Planner（代码/数据/统计实证压力测试）的双向评审工作流，用来同时遏制“单模型纸上谈兵”与“对抗评审防守型打压”：
+
+- **三类强制分诊**：每条质疑必须附证据归类为 `[HARD-FACT]`（硬事实一票否决，必须认账修正）、`[FIXABLE-SPEC]`（初版细节 Bug，只修实现不杀核心思想）或 `[UNVERIFIED-RISK]`（尚未验证风险，副审无一票否决权）。
+- **抗防守型打压机制**：副 Planner 建议 `REVISE/KILL` 时必须附带**最小可行挽救变体（MVV）或 ≤1 天证伪探针**，并自审其保守替代方案的天花板风险；主 Planner 在满足四项透明条件时可主动驳回保守 `KILL`。
+- 完整提示词模板与分诊判据见 [`dual-planner-ideation/references/co-planner-prompt-template.md`](dual-planner-ideation/references/co-planner-prompt-template.md) 与 [`dual-planner-ideation/references/anti-defensive-rubric.md`](dual-planner-ideation/references/anti-defensive-rubric.md)。
+
+```text
+$skill-installer install https://github.com/AlanZhu2006/my_skill/tree/main/dual-planner-ideation
 ```
 
 ### Development checks
