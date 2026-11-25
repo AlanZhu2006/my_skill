@@ -5,7 +5,7 @@ description: Operate shared NYU Torch HPC SSH ControlMaster sessions, Slurm GPU 
 
 # NYU Torch SSH & Slurm Operations
 
-Use this skill whenever interacting with NYU Torch HPC (`login.torch.hpc.nyu.edu`). The full verified runbook, command recipes, and chronological incident records (§0–§32) live in [`references/ssh_handbook.md`](references/ssh_handbook.md). Always read the relevant section of `references/ssh_handbook.md` before submitting jobs, changing partitions/accounts, or troubleshooting SSH/Slurm issues.
+Use this skill whenever interacting with NYU Torch HPC (`login.torch.hpc.nyu.edu`). The full verified runbook, command recipes, and chronological incident records (§0–§33) live in [`references/ssh_handbook.md`](references/ssh_handbook.md). Always read the relevant section of `references/ssh_handbook.md` before submitting jobs, changing partitions/accounts, or troubleshooting SSH/Slurm issues.
 
 ## Six Non-Negotiable Rules (§0)
 
@@ -42,6 +42,7 @@ Check active associations with `sacctmgr -nP show assoc where user=yz11502 forma
     - Always trap `SIGTERM`, write atomic checkpoints (`tmp -> fsync -> os.replace`), and pass `--open-mode=append` so preemption loses zero progress.
   - **Backfill discipline**: Prefer 1-GPU jobs/shards with measured realistic `--time` bounds (not blind `48:00:00`) so Slurm Backfill schedules them immediately in gaps left by large multi-GPU reservations.
   - **Live-training checkpoint isolation**: Never evaluate directly against a live training run's actively overwritten `best_adapter.pt`; copy it once into a read-only (`chmod a-w`) SHA-256-verified snapshot first.
+  - **GPU-utilization reaper & H200/B200 packing (§33)**: NYU Torch automatically warns (`75%`) and cancels (`60%`) high-tier GPUs (`h200`, `b200`) whose rolling GPU utilization stays below threshold for **> 2 hours** (verified: serial `batch=1` Habitat+4B eval on `gh115` H200 averaged `38.6%` and triggered `cancel_job=1` at `2:05:24`). **Never submit serial single-env `batch=1` simulator eval to `h200`/`b200` unpacked**: either (a) **pack `K` disjoint episode/arm workers onto 1 GPU** (auto-scaled from VRAM: `K=4–5` on H200/B200 for 4B, `K=3–4` for 7B–8B, `K=2` on L40S; `3 CPU/worker`, `OMP_NUM_THREADS=1`, staggered start, atomic per-shard JSON + merge) to reach **`85–95%` GPU util** and `3–4×` speedup, or (b) pin serial `batch=1` eval strictly to `l40s` / `< 1h45m` array shards. Always log rolling `nvidia-smi` utilization during Gate 1.
 - **Standard non-preemptible GPU queues (`--qos=gpu48`)**:
   - `torch_pr_50_tandon_priority`: `h100_tandon`, `a100_tandon`, `l40s_public`
   - `torch_pr_50_tandon_advanced` / `torch_pr_54_tandon_advanced`: `h200_tandon`, `h100_tandon`, `a100_tandon`

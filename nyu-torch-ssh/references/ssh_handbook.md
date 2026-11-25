@@ -1885,3 +1885,50 @@ scontrol show job -dd "$job_id" | grep -E 'JobId=|Account=|QOS=|Partition=|JobSt
 
 - **no-PTY `scp` 卡住时的小包替代路径**：若默认共享 ControlMaster 的 `ssh -O check` 正常且显式 PTY 正常，但 no-PTY `scp` 挂起，切勿关闭共享 master；对于轻量源码包（< 1 MB）或已校验 JSON 收据，可在已认证 PTY 中用 `tar czf - | base64` 传输，落地后立即执行 `sha256sum --strict -c SOURCE_BUNDLE.sha256` 逐项验签（大文件与数据集仍走 Globus）。
 - **单点硬件异常精确补跑**：数组评测中若极少数分片在特定节点（如偶发 Hopper `ExitCode 6:0`）异常中止，遵循 §0 保留失败日志，仅对 exact failed indices 指定已验健康分区（如 `l40s,b200`）精确重跑补齐，再以独立 CPU verifier 重放全部结果。
+
+---
+
+## 33. 2026-11-26：NYU Torch 2 小时 GPU 低利用率自动杀卡红线与 H200/B200 单卡多 Worker 装箱规范
+
+### 33.1 实测集群杀卡策略（2026-11-25 现场记录）
+
+2026-11-25 实测作业 `24595359`（`isok_arm5`，单环境串行 `batch=1` Habitat-Sim + 4B VLM 闭环评估）在 `gh115`（`h200`，`gpu48`）运行至 `02:05:24` 时，收到 NYU HPC 自动监控邮件并被强行取消（`cancel_job=1`）：
+
+- **实测参数**：`Partition=h200`，`Node:gh115, GPUIdx:5, AveUtil:38.60`，`warning_criteria=75%`，`cancellation_criteria=60%`，触发窗口为 **连续低利用率超过 2 小时**（阈值取决于 GPU 型号，H200/B200 最严格）。
+- **物理根因**：单环境串行 `batch=1` 闭环中，CPU 侧 Habitat 渲染 + 噪声/遮挡合成 + Python 预处理占每步 ~55 ms，而 4B 模型在 H200/B200 上 `batch=1` 前向仅 ~35 ms，导致单进程物理利用率上限被锁在 ~35–40%，超过 2 小时必触发杀卡。
+
+### 33.2 使用 H200 / B200 跑闭环评估的铁律：单卡多 Worker 分片装箱（`AveUtil 85–95%`）
+
+不要为了躲避杀卡而放弃 H200（141 GB）/ B200（180 GB）的算力与快排池，正确做法是**按显存自适应单卡多 Worker 并行装箱**，把 CPU 渲染空窗完全交错填满：
+
+1. **按卡型与模型显存自适应选择单卡并发度 `K`**（脚本启动时读 `nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits`）：
+   - **4B 模型（单进程 ~10 GB）**：`B200 (180 GB) → K=5`、`H200 (141 GB) → K=4`、`H100 (80 GB) → K=3`、`L40S (48 GB) → K=2`；
+   - **7B–8B 模型（单进程 ~18–22 GB）**：`B200 → K=4`、`H200 → K=3–4`、`H100 → K=2`、`L40S → K=1–2`。
+   - 排队估算：单进程利用率 $p \approx 0.386$ 时，`K=4` 独立异步进程并发可将 GPU 空闲率压至 $(1-p)^4 \approx 14\%$（实测 **`AveUtil ≈ 85–95%`**），同时总墙钟耗时缩短 `3–4×`（多数评估压进 `< 1.5 h`，同时享受高利用率与短于 2 小时窗口的双重保护）。
+2. **数值完全等价且零模型代码改动**：每个 Worker 仍运行原生 `batch=1` 推理，各跑互不重叠的 episode/arm 分片，写独立原子分片文件 `shard_${k}.json`（无目录锁竞争），全部结束后合并并通过独立 verifier 校验。
+3. **CPU 与启动防抖配置**：
+   - 按 **`3 CPU 核 / worker`、`20–24 GB RAM / worker`** 申请（如 `K=4` 配 `--cpus-per-task=12 --mem=96G`）；
+   - 每个 Worker 强制 `OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1`，防止多线程抢核饿死 GPU；
+   - 错峰启动 `sleep $((k * 5))`，避免 `K` 个进程同秒读权重和 3D 场景引发瞬时 I/O 尖峰。
+4. **若确实只能跑单进程串行 `batch=1`**：
+   - 严禁在 `--partition` 中混入 `h200` / `b200`，必须锁死 `--partition=l40s`（或 `a100_tandon`），或按 Slurm Array 拆成 `< 1h45m` 短分片；
+   - 严禁只靠 `--cpus-per-task=8 --mem=64G` 盲申过多资源，单进程串行 Habitat 用 `--cpus-per-task=4 --mem=32G` 即可。
+5. **内嵌 `nvidia-smi` 利用率哨兵（Gate 1 必验）**：
+   - 在 sbatch 作业中启动轻量后台采样（每 60 秒记录 `utilization.gpu,memory.used` 与滚动均值），在 Gate 1 前 5–10 分钟即确认 `AveUtil >= 80%`，杜绝盲跑满 2 小时才收到杀卡邮件。
+
+```bash
+# 轻量 GPU 利用率哨兵示例（放入 sbatch 后台，作业结束前 kill）
+(while true; do
+  ts=$(date +%H:%M:%S)
+  u=$(nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total --format=csv,noheader,nounits | head -n1)
+  echo "[GPU_MON $ts] util_pct,mem_used_mb,mem_total_mb = $u"
+  sleep 60
+done) &
+GPU_MON_PID=$!
+trap 'kill "$GPU_MON_PID" 2>/dev/null || true' EXIT
+```
+
+### 33.3 `/scratch` 与 `/home` 配额预警治理（防 80% 日常报警）
+
+- NYU Torch 任意文件系统空间或文件数超过 **80%** 即持续触发配额预警（2026-11-25 实测：`/scratch` 文件数 `4,331,166 / 5,000,000 = 86.00%`、`/home` 文件数 `20,503 / 30,000 = 68.00%`、`pip` 缓存 `7.2 GB`）。
+- 治本原则：① 历史散文件数据集与自建 Conda 环境打成 `.sqf` SquashFS overlay（百万文件 → 1 个 inode，Singularity `--overlay foo.sqf:ro` 零解压直挂）；② 完结历史项目打 `.tar.zst` 迁入 `/archive`（自动备份、不自动清理）；③ 所有作业通过 `SINGULARITYENV_*` 将缓存锁到 `$SLURM_TMPDIR`，实验结果一律单 JSON / 分片合并落盘。
