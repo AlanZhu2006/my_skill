@@ -1,6 +1,6 @@
 # HPC 共享 SSH、Slurm、数据传输与故障排查手册
 
-最后更新：2026-11-24（America/New_York；新增 `alan` 账号本机复用配置、B200 抢占提交语法 `--comment="preemption=yes;requeue=true"` 及最新账户/分区/QoS/配额/PyTorch 栈核验 §31；此前 Mac 直连说明见 §1.6）
+最后更新：2026-11-25（America/New_York；新增 §32 高效排卡实战规范：多分区抢占池组合、`sbatch --test-only` 对比选路法、Backfill 时限纪律、`SIGTERM` 零损原子续训与在训检查点只读快照隔离；此前 §31 见 B200 抢占提交语法及账户/分区/QoS/PyTorch 栈核验）
 
 适用范围：NYU Torch HPC 上的 GEM / MemNav / Certified Episodic Compass / Pi3X
 开发、数据传输、冻结评测与结果审计。
@@ -1834,3 +1834,54 @@ sbatch --test-only \
 
 远端数据集确认：`/scratch/lg154/Research/datasets/mp3d` 及 `_overlays/mp3d_revisit_v0_pt{1,2}.sqf` 可读。
 - **登录节点避坑提示**：切勿在登录节点执行 `find` 扫描 NFS 下的 conda `lib/` 或直接 `import torch`（易超时）；查包版本直接读 `site-packages/torch/version.py` 即可。
+
+---
+
+## 32. 2026-11-25：高效排卡实战规范、多分区抢占池与 `sbatch --test-only` 对比选路法
+
+在 2026-11-24 至 2026-11-25 的大规模多模型闭环（`3,726+` 次 Habitat 闭环）与 2×GPU DDP 蒸馏长训实践中，验证了一套稳定、高速且零算力浪费的排卡与容错规范。
+
+### 32.1 为什么能快速排到卡：四项协同策略
+
+1. **多分区回退池（Multi-Partition List）替代死等单分区**：
+   - 只要任务运行栈已在多个兼容 GPU 架构上通过 Gate 验证（例如 CUDA 12.8 + PyTorch ≥ 2.8 兼容 `l40s / h100 / h200 / b200`），提交时应将所有合格分区写成逗号列表，让 Slurm 调度器直接选取**预计最早开机**的节点，而不是盯死某一个高拥堵队列：
+     - **2 卡训练（可抢占续训）**：`--account=torch_pr_50_tandon_advanced --partition=h200,b200_tandon_prem,b200 --comment="preemption=yes;requeue=true" --requeue --signal=B:TERM@120`（省略 `--qos`）。实测 2×H200 运行至 Step 264 遭抢占后，自动无缝切换至 `b200_tandon_prem`（`gb001` 2×B200），单步耗时下降约 `35%`（`~23.5 s → ~17.5 s`）。
+     - **单卡评测 / Gate**：`--account=torch_pr_50_general --partition=l40s,h100,h200,b200 --comment="preemption=yes;requeue=true" --requeue --signal=B:TERM@120`。
+   - 若结论对特定 GPU 型号/精度/延迟敏感（如严格微基准计时），仍遵循 §3.1 固定单分区并在 receipt 中记录 GPU 型号与驱动。
+2. **代码级支持 `SIGTERM` 原子断点，敢用抢占式高算力池**：
+   - 抢占式 B200 池（`b200` / `b200_tandon_prem`）排队压力显著低于常规非抢占长队，但运行满 30 分钟后随时可能被 `REQUEUE`。
+   - 只要作业同时配置 `--requeue --signal=B:TERM@120 --open-mode=append`，并在训练/评测循环中捕获 `SIGTERM` 预警信号 + 每步/每条样本原子落盘（`tmp -> flush -> fsync -> os.replace`），即便发生多次抢占也能实现**零算力损失自动续跑**（实测长训连续经历 2 次抢占，Step 264 → Step 608 → Step 770+ 零丢步）。
+3. **单卡小粒度 + 贴合实测的 `--time`，吃满 Slurm Backfill 红利**：
+   - 大型 8 卡长时任务等待整机凑齐期间，节点会产生大量零散 1–2 卡与数小时空窗；Slurm Backfill 调度器会优先将**申请卡数少（1 卡）且 `--time` 精准合理**（如 1–8 小时，切忌无脑填 `48:00:00`）的作业直接塞入空窗秒开。
+4. **提交前先核对实时 `sacctmgr` 与 `sinfo`，多账户灵活路由**：
+   - 结合 `yz11502` 下的多项目账户（`torch_pr_50_general`、`torch_pr_50_tandon_advanced`、`torch_pr_50_tandon_priority`、`torch_pr_54_*`），根据当日实时负载选择最优合法账户，不盲抄历史脚本。
+
+### 32.2 为什么 `sbatch --test-only` 对比选路明显优于盲交
+
+`sbatch --test-only` 会让 Slurm 调度器执行完整校验与排期模拟，但**不实际创建或入队作业**，核心优势有四点：
+
+1. **量化对比各候选池的预计开机时间**：对 2–3 个候选 Account + Partition 组合并行跑 `--test-only`，调度器会直接打印预计启动时间与落地节点（2026-11-25 实测同脚本：`torch_pr_50_general` + `l40s,h100,h200,b200` 预计 `04:38` 于 `gl057` 启动，而 `h100_tandon` 预计 `11:58` 于 `gh002` 启动，一眼省下约 7 小时等待）。
+2. **当场拦截非法组合**：如 `b200_tandon_prem` 与不兼容 `--qos`、超额 CPU/内存或越界时间上限，在入队前 1 秒报错修正。
+3. **零队列污染与零误撤风险**：避免“先盲交 → 发现卡 `Priority` → 手动 `scancel`”带来的误操作与调度历史干扰。
+4. **与提交后 `scontrol show job -dd <JOB_ID>` 形成闭环**：预检定通道，提交后立刻回读确认实际生效的 `Partition`、`QOS`、`Requeue`、`TimeLimit`、`Comment`、`Dependency` 与 `StdOut`。
+
+```bash
+# 提交前：对比两个合法候选通道的预计启动时间（不入队、无副作用）
+sbatch --test-only --account=torch_pr_50_general --partition=l40s,h100,h200,b200 your_job.sbatch
+sbatch --test-only --account=torch_pr_50_tandon_advanced --partition=b200_tandon_prem,h200_tandon,h100_tandon your_job.sbatch
+
+# 选定最早通道正式提交并立即回读生效配置
+job_id=$(sbatch --parsable --account=torch_pr_50_general --partition=l40s,h100,h200,b200 your_job.sbatch)
+scontrol show job -dd "$job_id" | grep -E 'JobId=|Account=|QOS=|Partition=|JobState=|Requeue=|TimeLimit=|Comment=|StdOut='
+```
+
+### 32.3 抢占容错与并发评测的数据安全契约
+
+- **优雅接管 `SIGTERM`**：在 Slurm 包装脚本中 `trap` `SIGTERM` 写入预警文件路径（如 `PREEMPT_FILE`），Python 主循环在每条样本或训练步边界检查该标志，一旦触发立即安全落盘并退出特定码（由 Slurm `--requeue` 自动重排）。
+- **在训 checkpoint 并发评测必须做只读快照**：当训练任务（如 `train_full`）仍在持续更新 `best_adapter.pt` 时，若要提前用已有 checkpoint 并行跑评测，必须先拷贝为独立只读文件并固定 SHA-256（`cp best_adapter.pt snapshot.pt && chmod a-w snapshot.pt && sha256sum snapshot.pt`），严禁直接读取活跃训练路径，杜绝读写竞态与口径漂移。
+- **容器内环境变量显式透传**：Singularity 镜像自带环境变量可能覆盖宿主机 `TMPDIR`，应通过 `SINGULARITYENV_*` 显式透传 `SLURM_TMPDIR`、`TMPDIR`、`LIBFFI_TMPDIR`、`PYTHONPYCACHEPREFIX`、`HF_HOME`、`TORCH_HOME`、`TRITON_CACHE_DIR`，彻底避免节点 `/tmp` 写爆或 `/scratch`（已达 ~86% inode 配额）产生大量碎片缓存。
+
+### 32.4 运维实测补充避坑
+
+- **no-PTY `scp` 卡住时的小包替代路径**：若默认共享 ControlMaster 的 `ssh -O check` 正常且显式 PTY 正常，但 no-PTY `scp` 挂起，切勿关闭共享 master；对于轻量源码包（< 1 MB）或已校验 JSON 收据，可在已认证 PTY 中用 `tar czf - | base64` 传输，落地后立即执行 `sha256sum --strict -c SOURCE_BUNDLE.sha256` 逐项验签（大文件与数据集仍走 Globus）。
+- **单点硬件异常精确补跑**：数组评测中若极少数分片在特定节点（如偶发 Hopper `ExitCode 6:0`）异常中止，遵循 §0 保留失败日志，仅对 exact failed indices 指定已验健康分区（如 `l40s,b200`）精确重跑补齐，再以独立 CPU verifier 重放全部结果。

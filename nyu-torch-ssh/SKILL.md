@@ -5,7 +5,7 @@ description: Operate shared NYU Torch HPC SSH ControlMaster sessions, Slurm GPU 
 
 # NYU Torch SSH & Slurm Operations
 
-Use this skill whenever interacting with NYU Torch HPC (`login.torch.hpc.nyu.edu`). The full verified runbook, command recipes, and chronological incident records (§0–§31) live in [`references/ssh_handbook.md`](references/ssh_handbook.md). Always read the relevant section of `references/ssh_handbook.md` before submitting jobs, changing partitions/accounts, or troubleshooting SSH/Slurm issues.
+Use this skill whenever interacting with NYU Torch HPC (`login.torch.hpc.nyu.edu`). The full verified runbook, command recipes, and chronological incident records (§0–§32) live in [`references/ssh_handbook.md`](references/ssh_handbook.md). Always read the relevant section of `references/ssh_handbook.md` before submitting jobs, changing partitions/accounts, or troubleshooting SSH/Slurm issues.
 
 ## Six Non-Negotiable Rules (§0)
 
@@ -29,17 +29,23 @@ ssh -o BatchMode=yes alantorch 'id -un; hostname'
 - When passing an explicit ControlPath to `scp`, use `-o ControlPath=...` (never `-S`).
 - Avoid running `import torch` or deep `find` scans over shared NFS conda directories on login nodes; inspect version files directly or run Python checks on compute nodes.
 
-### 2. Verified Accounts & GPU Partitions (§23, §31)
+### 2. Verified Accounts, Fast Multi-Partition Scheduling & `--test-only` (§23, §31, §32)
 
-Check active associations with `sacctmgr -nP show assoc where user=yz11502 format=Cluster,Account,User,Partition,QOS,DefaultQOS` and test with `sbatch --test-only` before submitting:
+Check active associations with `sacctmgr -nP show assoc where user=yz11502 format=Cluster,Account,User,Partition,QOS,DefaultQOS`, then compare 2–3 candidate account/partition pools with `sbatch --test-only` before submitting:
 
-- **Preemptible B200 (all 5 project accounts)**: omit `--qos` and pass `--comment="preemption=yes;requeue=true"` with `--gres=gpu:b200:1`:
-  - `torch_pr_50_general`, `torch_pr_54_general` → partition `b200`
-  - `torch_pr_50_tandon_advanced`, `torch_pr_50_tandon_priority`, `torch_pr_54_tandon_advanced` → partition `b200_tandon_prem`
-  - Always handle `SIGTERM` and write atomic checkpoints for preemptible runs.
+- **Why always compare with `sbatch --test-only` first**: Slurm runs the real scheduler dry-run without entering the queue, immediately showing the **estimated start time and target partition/node** (often hours earlier across pools), catching invalid account/QOS/partition/GRES combinations up front, and avoiding blind queue stalls or `sbatch -> scancel` churn. Always follow the actual `sbatch` with `scontrol show job -dd <JOB_ID>`.
+- **Fast scheduling via multi-partition pools + preemptible B200 + Backfill**:
+  - Combine compatible partitions in one `--partition=...` list so Slurm grabs the earliest open GPU instead of waiting on a single busy queue (e.g., `--account=torch_pr_50_general --partition=l40s,h100,h200,b200` for single-GPU evals, or `--account=torch_pr_50_tandon_advanced --partition=h200,b200_tandon_prem,b200` for 2-GPU training).
+  - **Preemptible B200 (all 5 project accounts)**: omit `--qos` and pass `--comment="preemption=yes;requeue=true" --requeue --signal=B:TERM@120` with `--gres=gpu:b200:1` (or multi-partition list):
+    - `torch_pr_50_general`, `torch_pr_54_general` → partition `b200`
+    - `torch_pr_50_tandon_advanced`, `torch_pr_50_tandon_priority`, `torch_pr_54_tandon_advanced` → partition `b200_tandon_prem`
+    - Always trap `SIGTERM`, write atomic checkpoints (`tmp -> fsync -> os.replace`), and pass `--open-mode=append` so preemption loses zero progress.
+  - **Backfill discipline**: Prefer 1-GPU jobs/shards with measured realistic `--time` bounds (not blind `48:00:00`) so Slurm Backfill schedules them immediately in gaps left by large multi-GPU reservations.
+  - **Live-training checkpoint isolation**: Never evaluate directly against a live training run's actively overwritten `best_adapter.pt`; copy it once into a read-only (`chmod a-w`) SHA-256-verified snapshot first.
 - **Standard non-preemptible GPU queues (`--qos=gpu48`)**:
   - `torch_pr_50_tandon_priority`: `h100_tandon`, `a100_tandon`, `l40s_public`
-  - `torch_pr_50_general` / `torch_pr_54_general`: `l40s_public` (and check current `h200_public` / `h100_public` availability via `sbatch --test-only`).
+  - `torch_pr_50_tandon_advanced` / `torch_pr_54_tandon_advanced`: `h200_tandon`, `h100_tandon`, `a100_tandon`
+  - `torch_pr_50_general` / `torch_pr_54_general`: `h200_public`, `l40s_public` (verify live availability via `sbatch --test-only`).
 
 ### 3. Container & Conda Execution Pattern (§9.4, §31)
 
