@@ -8,6 +8,7 @@ Reusable skills for Codex.
 - [Paper Research Scout](paper-research-scout/SKILL.md): turn daily paper reports into reproducible baseline opportunities and transferable conceptual directions, with verified sources and continuity across days.
 - [NYU Torch SSH & Slurm](nyu-torch-ssh/SKILL.md): shared NYU Torch SSH ControlMaster workflows, verified multi-account/B200 preemptible Slurm submission rules, immutable source bundles, and scratch quota hygiene.
 - [LingBot-Map Deployment](lingbot-deployment/SKILL.md): LingBot-Map streaming RGB-to-3D reconstruction environment, pose conventions, FlashInfer backend requirements, joint streaming sessions, and causal render verification.
+- [Global Orchestrator & Torch Rules (`GEMINI.md`)](GEMINI.md): global Antigravity Lead Planner / local Codex Co-Planner & Executor delegation rules, Dual-Planner peer-review protocol, model routing, and NYU Torch SSH/Slurm guardrails.
 
 ## Research Compass / 研究罗盘
 
