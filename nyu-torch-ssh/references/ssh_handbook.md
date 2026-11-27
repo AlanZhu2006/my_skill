@@ -1932,3 +1932,19 @@ trap 'kill "$GPU_MON_PID" 2>/dev/null || true' EXIT
 
 - NYU Torch 任意文件系统空间或文件数超过 **80%** 即持续触发配额预警（2026-11-25 实测：`/scratch` 文件数 `4,331,166 / 5,000,000 = 86.00%`、`/home` 文件数 `20,503 / 30,000 = 68.00%`、`pip` 缓存 `7.2 GB`）。
 - 治本原则：① 历史散文件数据集与自建 Conda 环境打成 `.sqf` SquashFS overlay（百万文件 → 1 个 inode，Singularity `--overlay foo.sqf:ro` 零解压直挂）；② 完结历史项目打 `.tar.zst` 迁入 `/archive`（自动备份、不自动清理）；③ 所有作业通过 `SINGULARITYENV_*` 将缓存锁到 `$SLURM_TMPDIR`，实验结果一律单 JSON / 分片合并落盘。
+
+## 34. 2026-11-27：H200 Habitat EGL `SIGABRT (-6)` 规避、跨卡型 BF16 敏感性与抢占式 B200 断点续跑实测
+
+### 34.1 H200 节点 Habitat-Sim EGL `SIGABRT (-6)` 故障模式与分区路由
+- **实测故障记录**：在标准容器 `cuda12.8.1-cudnn9.8.0-ubuntu24.04.2.sif` 下，`gh113`（`24793437_10`，NaVILA-8B 闭环）与 `gh132`（`24794674_0` InternVLA-N1 闭环及早期 `24778494`）均在 Habitat `get_observation` 渲染阶段触发 `SIGABRT (-6)` 崩溃退出。
+- **有效运行规避（已验证零崩溃）**：
+  - 将 Habitat 闭环评测数组路由至 **`b200,l40s,h100`** 或 **`a100_tandon,h100_tandon,l40s_public`**（避开 H200）：实测 `LightNav-0 1A-v2`（11/11 B200，77 闭环）、`LightNav-0 RxR-55`（11/11 B200/L40S，770 闭环）、`NaVILA b10`（A100 `ga009`，16m13s）与 `InternVLA b0`（L40S `gl062`，44m34s）均为 **0% EGL 崩溃、100% `COMPLETED 0:0`**。
+  - 若单个 array index 在 H200 上触发 `SIGABRT`，严禁整阵重提：保留原失败现场日志，仅针对失败索引提交单卡非 H200 补跑，复用已完成原子分片。
+
+### 34.2 跨 GPU 架构 BF16 1-ULP 敏感性与同卡配对铁律
+- **实测现象**：`LightNav-0` `eid=698 natural_k1` 在 `B200 (sm_100)` 与 `L40S (sm_89)` 上因 BF16 矩阵乘 1-ULP 舍入差异产生不同闭环轨迹（但同卡 5 路仍逐比特完全一致）；`InternVLA-N1 Full-55` 中唯一 1 条自然/遮挡步数不等的路线（`ep 215`，`43 vs 40` 步，两卡均成功）亦因 H200 崩溃后在 L40S 续跑造成跨卡配对，其余 `54/54` 同卡配对 100% 逐位一致。
+- **配对铁律**：所有配对对照 arm（如 `native` vs 新方法、自然 vs 停顿/遮挡）必须在同一节点、同一 GPU 架构上运行；若因抢占或崩溃发生跨卡续跑，应在分析脚本与公开收据中显式记录并核验同卡配对比例。
+
+### 34.3 抢占式 B200（`--requeue`）原子分片续跑实测
+- `24796206_0`（`gb001 → gb011`）与 `24796206_10`（`gl028 → gb001`）在抢占/重排后均从既有原子分片 JSON 无缝续跑至 `770/770 COMPLETED 0:0`（零重复计算、零分片损坏，55/55 五路逐比特一致），验证了「单条 rollout 写独立原子 JSON（`tmp -> fsync -> os.replace`）+ 末尾独立 verifier 汇总」模式在抢占式 B200 池上的高吞吐可靠性。
+
